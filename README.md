@@ -7,15 +7,25 @@ My minimally acceptable state would be the game being functional, and having 3 d
 Stretch goals would be increasing the scale of difficulty from 0-10 instead of 0-2. These difficulties would be laid out as follows:
 
 0: computer picks random move
+
 1: computer picks their best moves, without evaluating the player.
+
 2: Computer uses minimax with one move depth.
+
 3: Computer uses minimax at 2 move depth.
+
 4: Minimax at 3 moved depth.
+
 5: Minimax at 4 move depth.
+
 6: Minimax at 5 move depth.
+
 7: Minimax at 6 move depth using alpha beta pruning.
+
 8: Minimax at 7 move depth using alpha beta pruning.
+
 9: Minimax at 8 move depth using alpha beta pruning.
+
 10: Minimax at 9 move depth using alpha beta pruning.
 
 This would be simple enough to implement as once I get the minimax working, I could simply increase the move depth and implement alpha beta pruning for later stages.
