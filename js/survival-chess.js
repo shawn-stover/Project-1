@@ -1,5 +1,6 @@
 window.addEventListener('DOMContentLoaded', () => {
 
-let board1 = Chessboard('board1', 'start')
+  let game = new Chess
 
+  let board = Chessboard('board1', 'start')
 })
