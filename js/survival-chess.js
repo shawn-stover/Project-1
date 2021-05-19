@@ -40,7 +40,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if(move.to === ('a8' || 'b8' || 'c8' || 'd8' || 'e8' || 'f8' || 'g8' || 'h8') && move.color === 'w' && move.piece ==='p') {
       game.put({ type: 'p', color: 'w'}, random)
     }
-    
+
     console.log(random)
 
       
