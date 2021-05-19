@@ -33,20 +33,26 @@ window.addEventListener('DOMContentLoaded', () => {
 
     let random = spawn[Math.floor(Math.random() * spawn.length)]
 
-    // if(move === null) {
-    //   return
-    // }
-    
-    if(move.to === ('a8' || 'b8' || 'c8' || 'd8' || 'e8' || 'f8' || 'g8' || 'h8') && move.color === 'w' && move.piece ==='p') {
-      game.put({ type: 'p', color: 'w'}, random)
+    if(move === null) {
+      return 'snapback'
     }
+    
+    // if(move.piece === 'p' && move.to === ('a8' || 'b8' || 'c8' || 'd8' || 'e8' || 'f8' || 'g8' || 'h8') && move.color === 'w') {
+    //   console.log(move.piece, move.color)
+    //   game.put({ type: 'p', color: 'w'}, random)
+    // }
 
-    console.log(random)
-
-      
+    if(move.piece === 'p'){
+      if(move.to === 'a8' || move.to === 'b8' || move.to === 'c8' || move.to === 'd8' || move.to === 'e8' || move.to === 'f8' || move.to === 'g8' || move.to === 'h8'){
+       if( move.color === 'w'){
+        game.put({ type: 'p', color: 'w'}, random)
+        console.log(random)
+        // For loop with spawn, needs check for empty square logic
+       }
+      }
+    } 
     // Call update status to ensure that moves get properly updated
     updateStatus()
-
   }    
 
   /* Update board state after the piece snaps into place
