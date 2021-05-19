@@ -31,30 +31,21 @@ window.addEventListener('DOMContentLoaded', () => {
       promotion: 'q'
     })
 
-    let random = spawn[Math.floor(Math.random() * spawn.length)]
-
     if(move === null) {
       return 'snapback'
     }
     
-    // if(move.piece === 'p' && move.to === ('a8' || 'b8' || 'c8' || 'd8' || 'e8' || 'f8' || 'g8' || 'h8') && move.color === 'w') {
-    //   console.log(move.piece, move.color)
-    //   game.put({ type: 'p', color: 'w'}, random)
-    // }
-
-    if(move.piece === 'p'){
+    if(move.piece === 'p' && move.color ==='w'){
       if(move.to === 'a8' || move.to === 'b8' || move.to === 'c8' || move.to === 'd8' || move.to === 'e8' || move.to === 'f8' || move.to === 'g8' || move.to === 'h8'){
-       if( move.color === 'w'){
-        game.put({ type: 'p', color: 'w'}, random)
-        console.log(random)
-        // For loop with spawn, needs check for empty square logic
+        board.position(game.fen()) 
+        do random = spawn[Math.floor(Math.random() * spawn.length)], console.log(game)
+          while(game.get(random) !== null)
+          game.put({ type: 'p', color: 'w'}, random)
        }
       }
-    } 
     // Call update status to ensure that moves get properly updated
-    updateStatus()
-  }    
-
+    updateStatus()  
+  }
   /* Update board state after the piece snaps into place
       Use for castling, en passant, pawn promotion */
   function onSnapEnd () {
