@@ -4,6 +4,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let game = new Chess()
   let $status = $('#status')
   let $level = $('#level')
+  let spawn = ['a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3']
 
   // Only Allow Legal Moves
   function onDragStart(source, piece, position, orientation) {
@@ -30,14 +31,23 @@ window.addEventListener('DOMContentLoaded', () => {
       promotion: 'q'
     })
 
-    // Prevent illegal moves
-    if (move === null) {
-      return 'snapback'
-    }
+    let random = spawn[Math.floor(Math.random() * spawn.length)]
 
+    // if(move === null) {
+    //   return
+    // }
+    
+    if(move.to === ('a8' || 'b8' || 'c8' || 'd8' || 'e8' || 'f8' || 'g8' || 'h8') && move.color === 'w' && move.piece ==='p') {
+      game.put({ type: 'p', color: 'w'}, random)
+    }
+    
+    console.log(random)
+
+      
     // Call update status to ensure that moves get properly updated
     updateStatus()
-  }  
+
+  }    
 
   /* Update board state after the piece snaps into place
       Use for castling, en passant, pawn promotion */
@@ -51,7 +61,6 @@ window.addEventListener('DOMContentLoaded', () => {
     let status = ''
     let level = 'Level: 1'
 
-    $level.html(level)
     //Initialize current move to white, but if it is black's turn, change to black
     let moveColor = 'White'
     if(game.turn() === 'b') {
