@@ -38,7 +38,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if(move.piece === 'p' && move.color ==='w'){
       if(move.to === 'a8' || move.to === 'b8' || move.to === 'c8' || move.to === 'd8' || move.to === 'e8' || move.to === 'f8' || move.to === 'g8' || move.to === 'h8'){
         board.position(game.fen()) 
-        do random = spawn[Math.floor(Math.random() * spawn.length)], console.log(game)
+        do random = spawn[Math.floor(Math.random() * spawn.length)])
           while(game.get(random) !== null)
           game.put({ type: 'p', color: 'w'}, random)
        }
