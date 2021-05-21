@@ -8,6 +8,12 @@ body {
     padding: 75px;
 }
 
+#board2 {
+    width: 600px;
+    margin:  auto;
+    padding: 75px;
+}
+
 #level {
     color: white;
     font-size: 32px;
