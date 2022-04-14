@@ -2,10 +2,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Initialize Variables, including jQuery
   let game = new Chess()
-  let $status = $('#status')
+  let status = ''
   let whiteSquareGray = '#a9a9a9'
   let blackSquareGray = '#696969'
-  let $level = $('#level')
+  let level = ''
   let spawn = ['a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3']
   let spawnWhite = ['a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4']
   let cpuReset = 'rnbqkbnr/pppppppp/'
@@ -79,7 +79,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (game.game_over()) return false
 
     /* Check if white or black to move
-       and disallow movement for other side */  
+      and disallow movement for other side */  
     if ((game.turn() === 'w' && piece.search (/^b/) !== -1) ||
         (game.turn() === 'b' && piece.search (/^w/) !== -1)) {
           return false
@@ -101,7 +101,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Generates and places new pawn for player on promotion
     if(move.piece === 'p' && move.color ==='w'){
-      if(move.to === 'a8' || move.to === 'b8' || move.to === 'c8' || move.to === 'd8' || move.to === 'e8' || move.to === 'f8' || move.to === 'g8' || move.to === 'h8'){
+      if(move.to === 'a8' || 'b8' || 'c8' || 'd8' || 'e8' || 'f8' || 'g8' || 'h8'){
         board.position(game.fen()) 
         do random = spawn[Math.floor(Math.random() * spawn.length)]
           while(game.get(random) !== null)
@@ -127,9 +127,11 @@ window.addEventListener('DOMContentLoaded', () => {
     if (possibleMoves.length === 0) return
   
     let randomIdx = Math.floor(Math.random() * possibleMoves.length)
-    game.move(possibleMoves[randomIdx])
-    moveColor === 'w'
-    board.position(game.fen())
+    if (moveColor === 'b'){
+      game.move(possibleMoves[randomIdx])
+      moveColor === 'w'
+      board.position(game.fen())
+    } 
   }
 
   function onMouseoverSquare (square, piece) {
@@ -234,8 +236,8 @@ window.addEventListener('DOMContentLoaded', () => {
     
   //Update status to handle finalizing legal moves
   function updateStatus () {
-    // let status = ''
-    // let level = 'Level ' + number
+    let status = ''
+    let level = 'Level ' + number
 
     //Initialize current move to white, but if it is black's turn, change to black
     let moveColor = 'White'
