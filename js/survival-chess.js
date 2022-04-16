@@ -72,7 +72,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // Only Allow Legal Moves
-  function onDragStart(source, piece, position, orientation) {
+  function onDragStart(piece) {
 
     /* If function is undefined in this js, pulls from chess.js
     prevents pieces from being moved when game is over */
@@ -101,7 +101,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Generates and places new pawn for player on promotion
     if(move.piece === 'p' && move.color ==='w'){
-      if(move.to === 'a8' || 'b8' || 'c8' || 'd8' || 'e8' || 'f8' || 'g8' || 'h8'){
+      if(move.to === 'a8' || move.to === 'b8' || move.to === 'c8' || move.to === 'd8' || move.to === 'e8' || move.to === 'f8' || move.to === 'g8' || move.to === 'h8'){
         board.position(game.fen()) 
         do random = spawn[Math.floor(Math.random() * spawn.length)]
           while(game.get(random) !== null)
@@ -115,29 +115,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Call update status to ensure that moves get properly updated
     updateStatus()
-
-
-  }
-
-  // Random CPU Logic 
-  function makeRandomMove () {
-    let possibleMoves = game.moves()
-  
-    // game over
-    if (possibleMoves.length === 0) return
-  
-    let randomIdx = Math.floor(Math.random() * possibleMoves.length)
-    if (moveColor === 'b'){
-      game.move(possibleMoves[randomIdx])
-      moveColor === 'w'
-      board.position(game.fen())
-    } 
   }
 
   function onMouseoverSquare (square, piece) {
     // Get list of possible moves for this square
     let moves = game.moves({
       square: square,
+      piece: piece,
       verbose: true
     })
   
@@ -157,6 +141,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // get list of possible moves for this square
     let moves = game.moves({
       square: square,
+      piece: piece,
       verbose: true
     })
   
@@ -176,6 +161,56 @@ window.addEventListener('DOMContentLoaded', () => {
     removeGraySquares()
   }
   
+  /* Update board state after the piece snaps into place
+      Use for castling, en passant, pawn promotion */
+  function onSnapEnd () {
+    // Capture fen string to use for updates
+    board.position(game.fen())
+  }
+    
+  //Update status to handle finalizing legal moves
+  function updateStatus () {
+    status = ''
+    level = 'Level ' + number
+
+    //Initialize current move to white, but if it is black's turn, change to black
+    let moveColor = 'White'
+    if(game.turn === 'b') {
+      makeRandomMove()
+      moveColor = 'Black'
+    }
+
+    // Check for Checkmate
+    if (game.in_checkmate()) {
+      if(move.color !== 'b') {
+        moveColor === 'Black'  
+        game.turn === 'b'
+        nextLevel()
+        // number++
+        game.game_over === false
+      }
+      else {
+        status = `Game over! You're in Checkmate!`
+        game.game_over === true
+      }
+    }
+    
+    // Check for draw
+    else if (game.in_draw()) {
+      status = 'Game over! Stalemate!'
+    }
+
+    // Game continues
+    else {
+      status = `${moveColor} to move`
+
+      // Is player in check?
+      if(game.in_check()) {
+        status += `,  ${moveColor} is in check!`
+      }
+    }
+  }
+
   function nextLevel() {
     let random2 = spawnWhite[Math.floor(Math.random() * spawnWhite.length)]
     let SQUARES2 = SQUARES.slice(0, 16)
@@ -201,85 +236,43 @@ window.addEventListener('DOMContentLoaded', () => {
 
     newLevelPos()
 
-      function newLevelPos() {
-        generateNewFen()
-        function generateNewFen() {
-          let found = game.fen().split("/", 2)
-          let secondStringIndex = game.fen().search(found[1]) + found[1].length + 1
-          let secondStrToFill = game.fen().substring(secondStringIndex)
-          newFen = cpuReset + secondStrToFill
+    function newLevelPos() {
+      generateNewFen()
+      function generateNewFen() {
+        let found = game.fen().split("/", 2)
+        let secondStringIndex = game.fen().search(found[1]) + found[1].length + 1
+        let secondStrToFill = game.fen().substring(secondStringIndex)
+        newFen = cpuReset + secondStrToFill
 
-          let config2 = {
-            draggable: true,
-            onDragStart: onDragStart,
-            showNotation: false,
-            onDrop: onDrop,
-            onMouseoutSquare: onMouseoutSquare,
-            onMouseoverSquare: onMouseoverSquare,
-            onSnapEnd: onSnapEnd
-          } 
-          
-          board.destroy()
-          game = new Chess(newFen)
-          board = Chessboard('board1', config2)
-          updateStatus()
-        }
+        let config2 = {
+          draggable: true,
+          onDragStart: onDragStart,
+          showNotation: false,
+          onDrop: onDrop,
+          onMouseoutSquare: onMouseoutSquare,
+          onMouseoverSquare: onMouseoverSquare,
+          onSnapEnd: onSnapEnd
+        } 
+        
+        board.destroy()
+        game = new Chess(newFen)
+        board = Chessboard('board1', config2)
+        updateStatus()
       }
+    }
   }
+
+  // Random CPU Logic 
+  function makeRandomMove () {
+    let possibleMoves = game.moves()
   
-  /* Update board state after the piece snaps into place
-      Use for castling, en passant, pawn promotion */
-  function onSnapEnd () {
-    //Capture fen string to use for updates
-    board.position(game.fen())
+    // game over
+    if (possibleMoves.length === 0) return
+  
+    let randomIdx = Math.floor(Math.random() * possibleMoves.length)
+    if (moveColor === 'b'){
+      game.move(possibleMoves[randomIdx])
+      board.position(game.fen())
+    } 
   }
-    
-  //Update status to handle finalizing legal moves
-  function updateStatus () {
-    let status = ''
-    let level = 'Level ' + number
-
-    //Initialize current move to white, but if it is black's turn, change to black
-    let moveColor = 'White'
-    if(game.turn === 'b') {
-      makeRandomMove()
-      moveColor = 'Black'
-    }
-
-    // Check for Checkmate
-    if (game.in_checkmate()) {
-      if(move.color !== 'b') {
-        moveColor === 'Black'  
-        game.turn === 'b'
-        nextLevel()
-        // number++
-        game.game_over === false
-      }
-      else {
-      // status = `Game over! You're in Checkmate!`
-      game.game_over === true
-      }
-    }
-    
-    // Check for draw
-    // else if (game.in_draw()) {
-    //   // status = 'Game over! Stalemate!'
-    // }
-
-    // Game continues
-    // else {
-    //   // status = `${moveColor} to move`
-
-    //   // Is player in check?
-    //   if(game.in_check()) {
-    //     status += `,  ${moveColor} is in check!`
-    //   }
-    // }
-
-    // $status.html(status)
-    // $level.html(level)
-  }
-
-  // Update Game Status
-  updateStatus()
 })                                             
