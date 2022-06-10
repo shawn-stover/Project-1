@@ -119,14 +119,11 @@ window.addEventListener('DOMContentLoaded', () => {
     // Call update status to ensure that moves get properly updated
     updateStatus()
   }
-<<<<<<< HEAD
-=======
 
   // Random CPU Logic 
   // function makeRandomMove () {
   //   if(game.turn() === 'b') {
   //     let possibleMoves = game.moves()
->>>>>>> 1a4e333ea224c9b62aedbba1c5a93725e75749a3
 
   //     // Game Over
   //     if (possibleMoves.length === 0) return
