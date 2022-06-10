@@ -2,10 +2,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Initialize Variables, including jQuery
   let game = new Chess()
-  let status = ''
+  let $status = $('#status')
   let whiteSquareGray = '#a9a9a9'
   let blackSquareGray = '#696969'
-  let level = ''
+  let $level = $('#level')
   let spawn = ['a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3']
   let spawnWhite = ['a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4']
   let cpuReset = 'rnbqkbnr/pppppppp/'
@@ -74,14 +74,14 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // Only Allow Legal Moves
-  function onDragStart(piece) {
+  function onDragStart(source, piece, position, orientation) {
 
     /* If function is undefined in this js, pulls from chess.js
     prevents pieces from being moved when game is over */
     if (game.game_over()) return false
 
     /* Check if white or black to move
-      and disallow movement for other side */  
+       and disallow movement for other side */  
     if ((game.turn() === 'w' && piece.search (/^b/) !== -1) ||
         (game.turn() === 'b' && piece.search (/^w/) !== -1)) {
           return false
@@ -139,7 +139,6 @@ window.addEventListener('DOMContentLoaded', () => {
     // Get list of possible moves for this square
     let moves = game.moves({
       square: square,
-      piece: piece,
       verbose: true
     })
   
@@ -159,7 +158,6 @@ window.addEventListener('DOMContentLoaded', () => {
     // get list of possible moves for this square
     let moves = game.moves({
       square: square,
-      piece: piece,
       verbose: true
     })
   
@@ -179,56 +177,6 @@ window.addEventListener('DOMContentLoaded', () => {
     removeGraySquares()
   }
   
-  /* Update board state after the piece snaps into place
-      Use for castling, en passant, pawn promotion */
-  function onSnapEnd () {
-    // Capture fen string to use for updates
-    board.position(game.fen())
-  }
-    
-  //Update status to handle finalizing legal moves
-  function updateStatus () {
-    status = ''
-    level = 'Level ' + number
-
-    //Initialize current move to white, but if it is black's turn, change to black
-    let moveColor = 'White'
-    if(game.turn === 'b') {
-      makeRandomMove()
-      moveColor = 'Black'
-    }
-
-    // Check for Checkmate
-    if (game.in_checkmate()) {
-      if(move.color !== 'b') {
-        moveColor === 'Black'  
-        game.turn === 'b'
-        nextLevel()
-        // number++
-        game.game_over === false
-      }
-      else {
-        status = `Game over! You're in Checkmate!`
-        game.game_over === true
-      }
-    }
-    
-    // Check for draw
-    else if (game.in_draw()) {
-      status = 'Game over! Stalemate!'
-    }
-
-    // Game continues
-    else {
-      status = `${moveColor} to move`
-
-      // Is player in check?
-      if(game.in_check()) {
-        status += `,  ${moveColor} is in check!`
-      }
-    }
-  }
-
   function nextLevel() {
     let random2 = spawnWhite[Math.floor(Math.random() * spawnWhite.length)]
     let SQUARES2 = SQUARES.slice(0, 16)
@@ -254,44 +202,30 @@ window.addEventListener('DOMContentLoaded', () => {
 
     newLevelPos()
 
-    function newLevelPos() {
-      generateNewFen()
-      function generateNewFen() {
-        let found = game.fen().split("/", 2)
-        let secondStringIndex = game.fen().search(found[1]) + found[1].length + 1
-        let secondStrToFill = game.fen().substring(secondStringIndex)
-        newFen = cpuReset + secondStrToFill
+      function newLevelPos() {
+        generateNewFen()
+        function generateNewFen() {
+          let found = game.fen().split("/", 2)
+          let secondStringIndex = game.fen().search(found[1]) + found[1].length + 1
+          let secondStrToFill = game.fen().substring(secondStringIndex)
+          newFen = cpuReset + secondStrToFill
 
-        let config2 = {
-          draggable: true,
-          onDragStart: onDragStart,
-          showNotation: false,
-          onDrop: onDrop,
-          onMouseoutSquare: onMouseoutSquare,
-          onMouseoverSquare: onMouseoverSquare,
-          onSnapEnd: onSnapEnd
-        } 
-        
-        board.destroy()
-        game = new Chess(newFen)
-        board = Chessboard('board1', config2)
-        updateStatus()
+          let config2 = {
+            draggable: true,
+            onDragStart: onDragStart,
+            showNotation: false,
+            onDrop: onDrop,
+            onMouseoutSquare: onMouseoutSquare,
+            onMouseoverSquare: onMouseoverSquare,
+            onSnapEnd: onSnapEnd
+          } 
+
+          board.destroy()
+          game = new Chess(newFen)
+          board = Chessboard('board1', config2)
+          updateStatus()
+        }
       }
-    }
-  }
-
-  // Random CPU Logic 
-  function makeRandomMove () {
-    let possibleMoves = game.moves()
-    
-    // game over
-    if (possibleMoves.length === 0) return
-  
-    let randomIdx = Math.floor(Math.random() * possibleMoves.length)
-    if (moveColor === 'b'){
-      game.move(possibleMoves[randomIdx])
-      board.position(game.fen())
-    } 
   }
   
   /* Update board state after the piece snaps into place
