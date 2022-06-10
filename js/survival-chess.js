@@ -254,7 +254,7 @@ window.addEventListener('DOMContentLoaded', () => {
       } 
       else if(game.turn() === 'w') {
       status = `Game over! You're in Checkmate!`
-      game.game_over === true
+      game.game_ove === true
       number = 1
       }
     }
