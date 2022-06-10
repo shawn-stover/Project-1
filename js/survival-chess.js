@@ -15,10 +15,12 @@ window.addEventListener('DOMContentLoaded', () => {
   ['a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4'],
   ['a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3'],
   ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'],
-  ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1']]
+  ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1']
+  ]
   let moveW = [
-    ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1',
-    'a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2']]
+    ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2',
+    'a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1']
+  ]
   let move
   let newFen
   let SQUARES =[
@@ -33,7 +35,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let square 
   let number = 1 
   let config
-  let moveColor
+  let turn
   firstGame()
   
   function firstGame() {
@@ -94,13 +96,14 @@ window.addEventListener('DOMContentLoaded', () => {
       to: target,
       promotion: 'q'
     })
+
     // Snap piece back if move is illegal
     if(move === null) {
       return 'snapback'
     }
 
     // Generates and places new pawn for player on promotion
-    if(move.piece === 'p' && move.color ==='w'){
+    if(move.piece === 'p' && move.color === 'w'){
       if(move.to === 'a8' || move.to === 'b8' || move.to === 'c8' || move.to === 'd8' || move.to === 'e8' || move.to === 'f8' || move.to === 'g8' || move.to === 'h8'){
         board.position(game.fen()) 
         do random = spawn[Math.floor(Math.random() * spawn.length)]
@@ -110,29 +113,29 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     // make random legal move for black
-    window.setTimeout(makeRandomMove, 250)
+    // window.setTimeout(makeRandomMove, 250)
 
 
     // Call update status to ensure that moves get properly updated
     updateStatus()
-
-
   }
 
   // Random CPU Logic 
-  function makeRandomMove () {
-    let possibleMoves = game.moves()
-  
-    // game over
-    if (possibleMoves.length === 0) return
-  
-    let randomIdx = Math.floor(Math.random() * possibleMoves.length)
-    game.move(possibleMoves[randomIdx])
-    moveColor === 'w'
-    board.position(game.fen())
-  }
+  // function makeRandomMove () {
+  //   if(game.turn() === 'b') {
+  //     let possibleMoves = game.moves()
 
-  function onMouseoverSquare (square, piece) {
+  //     // Game Over
+  //     if (possibleMoves.length === 0) return
+    
+  //     let randomIdx = Math.floor(Math.random() * possibleMoves.length)
+  //     game.move(possibleMoves[randomIdx])
+  //     board.position(game.fen())
+  //     updateStatus()
+  //   }
+  // }
+
+  function onMouseoverSquare (square) {
     // Get list of possible moves for this square
     let moves = game.moves({
       square: square,
@@ -151,7 +154,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function onMouseoverSquare (square, piece) {
+  function onMouseoverSquare (square) {
     // get list of possible moves for this square
     let moves = game.moves({
       square: square,
@@ -170,7 +173,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-  function onMouseoutSquare (square, piece) {
+  function onMouseoutSquare () {
     removeGraySquares()
   }
   
@@ -216,7 +219,7 @@ window.addEventListener('DOMContentLoaded', () => {
             onMouseoverSquare: onMouseoverSquare,
             onSnapEnd: onSnapEnd
           } 
-          
+
           board.destroy()
           game = new Chess(newFen)
           board = Chessboard('board1', config2)
@@ -228,54 +231,59 @@ window.addEventListener('DOMContentLoaded', () => {
   /* Update board state after the piece snaps into place
       Use for castling, en passant, pawn promotion */
   function onSnapEnd () {
-    //Capture fen string to use for updates
+    // Capture fen string to use for updates
     board.position(game.fen())
   }
     
-  //Update status to handle finalizing legal moves
+  // Update status to handle finalizing legal moves
   function updateStatus () {
-    // let status = ''
-    // let level = 'Level ' + number
+    let status = ''
+    let level = 'Level: ' + number
 
-    //Initialize current move to white, but if it is black's turn, change to black
-    let moveColor = 'White'
-    if(game.turn === 'b') {
-      makeRandomMove()
-      moveColor = 'Black'
+    // Initialize current turn to human, but if it is cpu's turn, change to cpu
+    let turn = 'Human'
+    if(game.turn() === 'b') {
+      turn = 'CPU'
     }
 
     // Check for Checkmate
     if (game.in_checkmate()) {
-      if(move.color !== 'b') {
-        moveColor === 'Black'  
-        game.turn === 'b'
+      if(game.turn() === 'b') {
+        number++
         nextLevel()
-        // number++
-        game.game_over === false
-      }
-      else {
-      // status = `Game over! You're in Checkmate!`
+      } 
+      else if(game.turn() === 'w') {
+      status = `Game over! You're in Checkmate!`
       game.game_over === true
+      number = 1
       }
     }
     
     // Check for draw
-    // else if (game.in_draw()) {
-    //   // status = 'Game over! Stalemate!'
-    // }
+    else if (game.in_draw()) {
+      status = 'Game over! Stalemate!'
+    }
 
     // Game continues
-    // else {
-    //   // status = `${moveColor} to move`
+    else {
+      status = `${turn} to move!`
+        if(turn === 'CPU') {
+          status = `${turn} to move! ${turn} is thinking!`
+        }
 
-    //   // Is player in check?
-    //   if(game.in_check()) {
-    //     status += `,  ${moveColor} is in check!`
-    //   }
-    // }
+      // Is player or CPU in check?
+      if(game.in_check()) {
+        if (turn === 'Human') {
+          status += ` ${turn} is in check!`
+        }
+        else if (turn === 'CPU') {
+          status += ` ${turn} is in check!`
+        }
+      }
+    }
 
-    // $status.html(status)
-    // $level.html(level)
+    $status.html(status)
+    $level.html(level)
   }
 
   // Update Game Status
