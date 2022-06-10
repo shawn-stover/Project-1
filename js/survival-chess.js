@@ -262,7 +262,6 @@ window.addEventListener('DOMContentLoaded', () => {
         let secondStrToFill = game.fen().substring(secondStringIndex)
         newFen = cpuReset + secondStrToFill
 
-<<<<<<< HEAD
         let config2 = {
           draggable: true,
           onDragStart: onDragStart,
@@ -277,23 +276,6 @@ window.addEventListener('DOMContentLoaded', () => {
         game = new Chess(newFen)
         board = Chessboard('board1', config2)
         updateStatus()
-=======
-          let config2 = {
-            draggable: true,
-            onDragStart: onDragStart,
-            showNotation: false,
-            onDrop: onDrop,
-            onMouseoutSquare: onMouseoutSquare,
-            onMouseoverSquare: onMouseoverSquare,
-            onSnapEnd: onSnapEnd
-          } 
-
-          board.destroy()
-          game = new Chess(newFen)
-          board = Chessboard('board1', config2)
-          updateStatus()
-        }
->>>>>>> 1a4e333ea224c9b62aedbba1c5a93725e75749a3
       }
     }
   }
@@ -301,8 +283,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Random CPU Logic 
   function makeRandomMove () {
     let possibleMoves = game.moves()
-  
-<<<<<<< HEAD
+    
     // game over
     if (possibleMoves.length === 0) return
   
@@ -312,7 +293,7 @@ window.addEventListener('DOMContentLoaded', () => {
       board.position(game.fen())
     } 
   }
-=======
+  
   /* Update board state after the piece snaps into place
       Use for castling, en passant, pawn promotion */
   function onSnapEnd () {
@@ -373,5 +354,4 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Update Game Status
   updateStatus()
->>>>>>> 1a4e333ea224c9b62aedbba1c5a93725e75749a3
 })                                             
